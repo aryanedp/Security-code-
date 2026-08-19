@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARYAN_EDP</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ min-height:100vh;
+ background:#07080d;
+ color:white;
+ font-family:Arial,system-ui,sans-serif;
+}
+body:before{
+ content:"";
+ position:fixed;
+ inset:-30%;
+ z-index:-1;
+ background:
+ radial-gradient(circle at 15% 20%,#6366f155,transparent 30%),
+ radial-gradient(circle at 85% 20%,#06b6d455,transparent 30%),
+ radial-gradient(circle at 50% 100%,#a855f744,transparent 30%);
+ filter:blur(50px);
+}
+.container{
+ width:min(900px,94%);
+ margin:auto;
+}
+.card{
+ margin-top:60px;
+ padding:28px;
+ border-radius:24px;
+ background:#ffffff0b;
+ border:1px solid #ffffff16;
+ box-shadow:0 20px 80px #0008;
+ backdrop-filter:blur(18px);
+}
+h1{
+ font-size:52px;
+ margin:0;
+ background:linear-gradient(90deg,#67e8f9,#818cf8,#c084fc);
+ -webkit-background-clip:text;
+ color:transparent;
+}
+.muted{color:#9ca3af}
+button{
+ border:0;
+ padding:13px 18px;
+ border-radius:12px;
+ color:white;
+ font-weight:bold;
+ cursor:pointer;
+ background:linear-gradient(135deg,#6366f1,#8b5cf6);
+}
+button:disabled{opacity:.5}
+.secondary{
+ background:#ffffff0b;
+ border:1px solid #ffffff15;
+}
+.hidden{display:none!important}
+.top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+}
+.balance{
+ margin-top:18px;
+ padding:20px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+.balance strong{
+ font-size:50px;
+}
+.section{
+ margin-top:18px;
+ padding:20px;
+}
+.row{
+ padding:15px 0;
+ border-top:1px solid #ffffff12;
+ display:flex;
+ justify-content:space-between;
+ gap:15px;
+ align-items:center;
+}
+.notice{
+ padding:14px;
+ border-radius:12px;
+ background:#ffffff08;
+ color:#cbd5e1;
+}
+dialog{
+ width:min(450px,92%);
+ background:#10131d;
+ color:white;
+ border:1px solid #ffffff20;
+ border-radius:20px;
+}
+dialog::backdrop{
+ background:#000b;
+}
+dialog form{
+ padding:22px;
+}
+input,select{
+ width:100%;
+ margin-top:7px;
+ padding:12px;
+ border-radius:10px;
+ border:1px solid #ffffff20;
+ background:#ffffff0a;
+ color:white;
+}
+label{
+ display:block;
+ margin:14px 0;
+}
+img.qr{
+ width:250px;
+ max-width:100%;
+ display:block;
+ margin:15px auto;
+ background:white;
+ padding:8px;
+ border-radius:15px;
+}
+.badge{
+ padding:5px 9px;
+ border-radius:99px;
+ background:#ffffff0c;
+}
+.ok{color:#86efac}
+.pending{color:#fde68a}
+.bad{color:#fca5a5}
+a{color:white}
+@media(max-width:600px){
+ .balance,.row,.top{
+  flex-direction:column;
+  align-items:stretch;
+ }
+ h1{font-size:40px}
+}
+</style>
+</head>
+
+<body>
+
+<div id="loginPage" class="container">
+ <div class="card" style="text-align:center">
+
+  <h1>ARYAN_EDP</h1>
+
+  <p class="muted">
+   Premium secure file download portal.
+  </p>
+
+  <button id="loginBtn">
+   🔐 Continue with Google
+  </button>
+
+  <p id="loginMsg" class="muted"></p>
+
+ </div>
+</div>
+
+
+<div id="appPage" class="container hidden">
+
+ <div class="card">
+
+  <div class="top">
+
+   <div>
+    <h2>ARYAN_EDP</h2>
+    <span id="email" class="muted"></span>
+   </div>
+
+   <button id="logoutBtn" class="secondary">
+    Logout
+   </button>
+
+  </div>
+
+
+  <div class="balance card">
+
+   <div>
+    <div class="muted">Available Credits</div>
+    <strong id="credits">0</strong>
+   </div>
+
+   <button id="buyBtn">
+    💳 Buy Credits
+   </button>
+
+  </div>
+
+
+  <div class="section card">
+
+   <h2>📁 Files</h2>
+
+   <p class="muted">
+    Download ke liye 1 credit use hoga.
+   </p>
+
+   <div id="files">
+    <div class="notice">Loading...</div>
+   </div>
+
+  </div>
+
+
+  <div class="section card">
+
+   <h2>💳 Payment History</h2>
+
+   <div id="history">
+    <div class="notice">Loading...</div>
+   </div>
+
+  </div>
+
+ </div>
+
+</div>
+
+
+<dialog id="paymentDialog">
+
+<form id="paymentForm">
+
+ <h2>Buy Credits</h2>
+
+ <label>
+  Credits
+
+  <select id="quantity">
+   <option value="1">1 Credit</option>
+   <option value="2">2 Credits</option>
+   <option value="3">3 Credits</option>
+   <option value="5">5 Credits</option>
+   <option value="10">10 Credits</option>
+  </select>
+ </label>
+
+ <p>
+  Total:
+  <b>₹<span id="amount">699</span></b>
+ </p>
+
+ <img
+  id="qr"
+  class="qr"
+  src="https://cdn.phototourl.com/free/2026-08-11-5c2901fb-bbe5-4a5d-adc8-f34a1a4a43bc.png"
+ >
+
+ <label>
+  UTR / Transaction ID
+  <input id="utr" required placeholder="Enter UTR">
+ </label>
+
+ <label>
+  Payment Screenshot
+  <input
+   id="screenshot"
+   type="file"
+   accept="image/*"
+   required
+  >
+ </label>
+
+ <button id="submitPayment">
+  Submit Payment
+ </button>
+
+ <button
+  type="button"
+  id="closePayment"
+  class="secondary"
+ >
+  Close
+ </button>
+
+ <p id="paymentMsg" class="muted"></p>
+
+</form>
+
+</dialog>
+
+
+<script type="module">
+
+import {
+ initializeApp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+ getAuth,
+ GoogleAuthProvider,
+ signInWithPopup,
+ onAuthStateChanged,
+ signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+ getFirestore,
+ doc,
+ getDoc,
+ setDoc,
+ collection,
+ getDocs,
+ addDoc,
+ query,
+ where,
+ orderBy,
+ serverTimestamp,
+ onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+import {
+ getStorage,
+ ref,
+ uploadBytes,
+ getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
+
+
+const firebaseConfig = {
+ apiKey:"AIzaSyC_w8EejF-SjIStlPlKdEI1QEuHvh9fQ1E",
+ authDomain:"sandeep-e363a.firebaseapp.com",
+ projectId:"sandeep-e363a",
+ storageBucket:"sandeep-e363a.firebasestorage.app",
+ messagingSenderId:"812128011642",
+ appId:"1:812128011642:web:ce340a1220a53254cc82c3",
+ measurementId:"G-HESB6RJ0M8"
+};
+
+
+const app=initializeApp(firebaseConfig);
+
+const auth=getAuth(app);
+const db=getFirestore(app);
+const storage=getStorage(app);
+
+const PRICE=699;
+
+
+const $=id=>document.getElementById(id);
+
+
+$("quantity").onchange=()=>{
+ $("amount").textContent=
+ Number($("quantity").value)*PRICE;
+};
+
+
+$("loginBtn").onclick=async()=>{
+
+ try{
+
+  $("loginBtn").disabled=true;
+  $("loginMsg").textContent="Google login opening...";
+
+  const provider=new GoogleAuthProvider();
+
+  await signInWithPopup(auth,provider);
+
+ }catch(error){
+
+  console.error(error);
+
+  $("loginMsg").textContent=
+   error.code+" : "+error.message;
+
+  $("loginBtn").disabled=false;
+ }
+
+};
+
+
+$("logoutBtn").onclick=()=>{
+ signOut(auth);
+};
+
+
+$("buyBtn").onclick=()=>{
+ $("paymentDialog").showModal();
+};
+
+
+$("closePayment").onclick=()=>{
+ $("paymentDialog").close();
+};
+
+
+onAuthStateChanged(auth,async user=>{
+
+ if(!user){
+
+  $("loginPage").classList.remove("hidden");
+  $("appPage").classList.add("hidden");
+
+  return;
+ }
+
+ $("loginPage").classList.add("hidden");
+ $("appPage").classList.remove("hidden");
+
+ $("email").textContent=user.email||"";
+
+ const userRef=doc(db,"users",user.uid);
+
+ const userSnap=await getDoc(userRef);
+
+ if(!userSnap.exists()){
+
+  await setDoc(userRef,{
+   name:user.displayName||"",
+   email:user.email||"",
+   photoURL:user.photoURL||"",
+   credits:0,
+   createdAt:serverTimestamp()
+  });
+
+ }
+
+ onSnapshot(userRef,snap=>{
+
+  if(snap.exists()){
+
+   $("credits").textContent=
+    Number(snap.data().credits||0);
+
+  }
+
+ });
+
+ loadFiles();
+ loadHistory(user.uid);
+
+});
+
+
+async function loadFiles(){
+
+ try{
+
+  const q=query(
+   collection(db,"files"),
+   orderBy("createdAt","desc")
+  );
+
+  const snap=await getDocs(q);
+
+  $("files").innerHTML="";
+
+  if(snap.empty){
+
+   $("files").innerHTML=
+    '<div class="notice">No files available.</div>';
+
+   return;
+  }
+
+
+  snap.forEach(docSnap=>{
+
+   const data=docSnap.data();
+
+   const row=document.createElement("div");
+   row.className="row";
+
+   const info=document.createElement("div");
+
+   info.innerHTML=
+    "<b>"+escapeHTML(data.title||"File")+
+    "</b><br>"+
+    "<span class='muted'>"+
+    escapeHTML(data.description||"")+
+    "</span>";
+
+   const btn=document.createElement("button");
+
+   btn.textContent="Download";
+
+   btn.onclick=()=>downloadFile(data,btn);
+
+   row.append(info,btn);
+
+   $("files").appendChild(row);
+
+  });
+
+ }catch(error){
+
+  console.error(error);
+
+  $("files").innerHTML=
+   '<div class="notice">Files load error: '+
+   escapeHTML(error.message)+
+   '</div>';
+
+ }
+
+}
+
+
+async function downloadFile(file,button){
+
+ const user=auth.currentUser;
+
+ if(!user)return;
+
+ try{
+
+  button.disabled=true;
+
+  const userRef=doc(db,"users",user.uid);
+
+  const snap=await getDoc(userRef);
+
+  const credits=
+   Number(snap.data()?.credits||0);
+
+  if(credits<1){
+
+   throw new Error(
+    "Credits khatam hain. Pehle credits buy karein."
+   );
+
+  }
+
+
+  await setDoc(
+   userRef,
+   {credits:credits-1},
+   {merge:true}
+  );
+
+
+  if(file.downloadURL){
+
+   window.open(file.downloadURL,"_blank");
+
+  }else if(file.storagePath){
+
+   const url=await getDownloadURL(
+    ref(storage,file.storagePath)
+   );
+
+   window.open(url,"_blank");
+
+  }else{
+
+   throw new Error("File URL missing.");
+
+  }
+
+ }catch(error){
+
+  alert(error.message);
+
+ }finally{
+
+  button.disabled=false;
+
+ }
+
+}
+
+
+async function loadHistory(uid){
+
+ try{
+
+  const q=query(
+   collection(db,"paymentRequests"),
+   where("uid","==",uid),
+   orderBy("createdAt","desc")
+  );
+
+  const snap=await getDocs(q);
+
+  $("history").innerHTML="";
+
+  if(snap.empty){
+
+   $("history").innerHTML=
+    '<div class="notice">No payment requests.</div>';
+
+   return;
+  }
+
+
+  snap.forEach(d=>{
+
+   const x=d.data();
+
+   const row=document.createElement("div");
+
+   row.className="row";
+
+   const status=x.status||"pending";
+
+   row.innerHTML=
+    "<div><b>"+
+    x.credits+
+    " Credits • ₹"+
+    x.amount+
+    "</b><br>"+
+    "<span class='muted'>UTR: "+
+    escapeHTML(x.utr||"")+
+    "</span></div>"+
+    "<span class='badge "+
+    (status==="accepted"?"ok":
+     status==="rejected"?"bad":"pending")+
+    "'>"+
+    escapeHTML(status)+
+    "</span>";
+
+   $("history").appendChild(row);
+
+  });
+
+ }catch(error){
+
+  console.error(error);
+
+  $("history").innerHTML=
+   '<div class="notice">'+
+   escapeHTML(error.message)+
+   '</div>';
+
+ }
+
+}
+
+
+$("paymentForm").onsubmit=async e=>{
+
+ e.preventDefault();
+
+ const user=auth.currentUser;
+ const file=$("screenshot").files[0];
+
+ if(!user||!file)return;
+
+
+ try{
+
+  $("submitPayment").disabled=true;
+  $("paymentMsg").textContent=
+   "Screenshot upload ho raha hai...";
+
+
+  if(file.size>5*1024*1024){
+
+   throw new Error(
+    "Screenshot 5MB se chhota hona chahiye."
+   );
+
+  }
+
+
+  const credits=
+   Number($("quantity").value);
+
+  const path=
+   "payment-screenshots/"+
+   user.uid+"/"+
+   Date.now()+"-"+cleanName(file.name);
+
+
+  const storageRef=ref(storage,path);
+
+
+  await uploadBytes(
+   storageRef,
+   file,
+   {contentType:file.type}
+  );
+
+
+  const screenshotURL=
+   await getDownloadURL(storageRef);
+
+
+  await addDoc(
+   collection(db,"paymentRequests"),
+   {
+    uid:user.uid,
+    userEmail:user.email||"",
+    credits:credits,
+    amount:credits*PRICE,
+    utr:$("utr").value.trim(),
+    screenshotURL:screenshotURL,
+    status:"pending",
+    createdAt:serverTimestamp()
+   }
+  );
+
+
+  $("paymentMsg").textContent=
+   "✅ Payment request submitted!";
+
+
+  $("paymentForm").reset();
+
+  await loadHistory(user.uid);
+
+
+  setTimeout(()=>{
+   $("paymentDialog").close();
+   $("paymentMsg").textContent="";
+  },1200);
+
+
+ }catch(error){
+
+  console.error(error);
+
+  $("paymentMsg").textContent=
+   "❌ "+error.code+" : "+error.message;
+
+ }finally{
+
+  $("submitPayment").disabled=false;
+
+ }
+
+};
+
+
+function cleanName(name){
+
+ return name.replace(
+  /[^a-zA-Z0-9._-]/g,
+  "_"
+ );
+
+}
+
+
+function escapeHTML(value){
+
+ return String(value).replace(
+  /[&<>"']/g,
+  char=>({
+   "&":"&amp;",
+   "<":"&lt;",
+   ">":"&gt;",
+   '"':"&quot;",
+   "'":"&#039;"
+  }[char])
+ );
+
+}
+
+</script>
+
+</body>
+</html>
